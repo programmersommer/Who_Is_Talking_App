@@ -143,16 +143,23 @@ namespace WhoIsTalkingApp
                 }
                 else if (enrollmentResult.Status == Status.Failed)
                 {
-                    throw new IdentificationException(enrollmentResult.Message);
+                    txtInfo.Text = enrollmentResult.Message;
+                    CaptureMedia = null;
+                    btnRecordEnroll.IsEnabled = true;
+                    btnIdentify.IsEnabled = true;
+                    return;
                 }
                 numOfRetries--;
             }
+
             if (numOfRetries <= 0)
             {
-                throw new IdentificationException("Identification operation timeout.");
+                txtInfo.Text = "Identification operation timeout";
             }
-
-            txtInfo.Text = "Enrollment done. " + enrollmentResult.Status + Environment.NewLine + " Remaining Speech Time " + enrollmentResult.ProcessingResult.RemainingEnrollmentSpeechTime;
+            else
+            {
+                txtInfo.Text = "Enrollment done. " + enrollmentResult.Status + Environment.NewLine + " Remaining Speech Time " + enrollmentResult.ProcessingResult.RemainingEnrollmentSpeechTime;
+            }
 
             CaptureMedia = null;
             btnRecordEnroll.IsEnabled = true;
@@ -275,17 +282,16 @@ namespace WhoIsTalkingApp
                 }
                 numOfRetries--;
             }
+
             if (numOfRetries <= 0)
             {
                 txtInfo.Text = "Identification operation timeout.";
-                CaptureMedia = null;
-                btnRecordEnroll.IsEnabled = true;
-                btnIdentify.IsEnabled = true;
-                return;
             }
-
+            else
+            { 
             txtInfo.Text = identificationResponse.ProcessingResult.IdentifiedProfileId.ToString();
             txtInfo.Text = txtInfo.Text + Environment.NewLine + identificationResponse.ProcessingResult.Confidence.ToString();
+            }
 
             CaptureMedia = null;
             btnRecordEnroll.IsEnabled = true;
