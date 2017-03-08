@@ -103,6 +103,7 @@ namespace WhoIsTalkingApp
 
         async Task FinishEnrollment()
         {
+            if (btnRecordEnroll.IsEnabled == false) return; // if user clicks and then comes timer event
 
             btnRecordEnroll.Content = "Start record enrollment";
             btnRecordEnroll.IsEnabled = false;
@@ -229,6 +230,8 @@ namespace WhoIsTalkingApp
 
         async Task finishIdentification()
         {
+            if (btnIdentify.IsEnabled == false) return; // if user clicks and then comes timer event
+
             btnIdentify.Content = "Start voice identification";
             btnIdentify.IsEnabled = false;
             await CaptureMedia.StopRecordAsync();
