@@ -111,14 +111,13 @@ namespace WhoIsTalkingApp
             Stream str = AudioStream.AsStream();
             str.Seek(0, SeekOrigin.Begin);
 
-            SpeakerIdentificationServiceClient _serviceIdentClient = new SpeakerIdentificationServiceClient(_subscriptionKey);
 
             Guid _speakerId = Guid.Parse((lbProfiles.SelectedItem as ListBoxItem).Content.ToString());
 
             OperationLocation processPollingLocation;
             try
             {
-                processPollingLocation = await _serviceIdentClient.EnrollAsync(str, _speakerId);
+                processPollingLocation = await _serviceClient.EnrollAsync(str, _speakerId);
             }
             catch (EnrollmentException vx)
             {
@@ -239,12 +238,11 @@ namespace WhoIsTalkingApp
                 testProfileIds[i] = Guid.Parse((lbProfiles.Items[i] as ListBoxItem).Content.ToString());
             }
 
-            SpeakerIdentificationServiceClient _serviceIdentClient = new SpeakerIdentificationServiceClient(_subscriptionKey);
 
             OperationLocation processPollingLocation;
             try
             {
-                processPollingLocation = await _serviceIdentClient.IdentifyAsync(str, testProfileIds);
+                processPollingLocation = await _serviceClient.IdentifyAsync(str, testProfileIds);
             }
             catch (IdentificationException vx)
             {
@@ -255,14 +253,13 @@ namespace WhoIsTalkingApp
                 return;
             }
 
-
             IdentificationOperation identificationResponse = null;
             int numOfRetries = 10;
             TimeSpan timeBetweenRetries = TimeSpan.FromSeconds(5.0);
             while (numOfRetries > 0)
             {
                 await Task.Delay(timeBetweenRetries);
-                identificationResponse = await _serviceIdentClient.CheckIdentificationStatusAsync(processPollingLocation);
+                identificationResponse = await _serviceClient.CheckIdentificationStatusAsync(processPollingLocation);
 
                 if (identificationResponse.Status == Status.Succeeded)
                 {
