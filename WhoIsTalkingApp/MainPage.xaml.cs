@@ -35,6 +35,7 @@ namespace WhoIsTalkingApp
 
         private SpeakerIdentificationServiceClient _serviceClient;
         private string _subscriptionKey;
+        Guid _speakerId;
 
         DispatcherTimer _etimer;
         DispatcherTimer _itimer;
@@ -96,12 +97,12 @@ namespace WhoIsTalkingApp
             else
             {
                 _etimer.Stop();
-                await FinishEnrollment();
+                await finishEnrollment();
             }
         }
 
 
-        async Task FinishEnrollment()
+        async Task finishEnrollment()
         {
             if (btnRecordEnroll.IsEnabled == false) return; // if user clicks and then comes timer event
 
@@ -113,7 +114,7 @@ namespace WhoIsTalkingApp
             str.Seek(0, SeekOrigin.Begin);
 
 
-            Guid _speakerId = Guid.Parse((lbProfiles.SelectedItem as ListBoxItem).Content.ToString());
+            _speakerId = Guid.Parse((lbProfiles.SelectedItem as ListBoxItem).Content.ToString());
 
             OperationLocation processPollingLocation;
             try
@@ -123,9 +124,13 @@ namespace WhoIsTalkingApp
             catch (EnrollmentException vx)
             {
                 txtInfo.Text = vx.Message;
-                CaptureMedia = null;
-                btnRecordEnroll.IsEnabled = true;
-                btnIdentify.IsEnabled = true;
+                CleanAfter();
+                return;
+            }
+            catch (Exception vx)
+            {
+                txtInfo.Text = vx.Message;
+                CleanAfter();
                 return;
             }
 
@@ -145,9 +150,7 @@ namespace WhoIsTalkingApp
                 else if (enrollmentResult.Status == Status.Failed)
                 {
                     txtInfo.Text = enrollmentResult.Message;
-                    CaptureMedia = null;
-                    btnRecordEnroll.IsEnabled = true;
-                    btnIdentify.IsEnabled = true;
+                    CleanAfter();
                     return;
                 }
                 numOfRetries--;
@@ -162,9 +165,7 @@ namespace WhoIsTalkingApp
                 txtInfo.Text = "Enrollment done. " + enrollmentResult.Status + Environment.NewLine + " Remaining Speech Time " + enrollmentResult.ProcessingResult.RemainingEnrollmentSpeechTime;
             }
 
-            CaptureMedia = null;
-            btnRecordEnroll.IsEnabled = true;
-            btnIdentify.IsEnabled = true;
+            CleanAfter();
         }
 
 
@@ -172,7 +173,7 @@ namespace WhoIsTalkingApp
         {
             _etimer.Stop();
 
-            await FinishEnrollment();
+            await finishEnrollment();
         }
 
         private async void IdentificationTime_Over(object sender, object e)
@@ -183,12 +184,14 @@ namespace WhoIsTalkingApp
 
         private void MediaCaptureOnRecordLimitationExceeded(MediaCapture sender)
         {
-            throw new NotImplementedException();
+            txtInfo.Text = "Record limitation exceeded";
+            CleanAfter();
         }
 
         private void MediaCaptureOnFailed(MediaCapture sender, MediaCaptureFailedEventArgs errorEventArgs)
         {
-            throw new NotImplementedException();
+            txtInfo.Text = errorEventArgs.Message;
+            CleanAfter();
         }
 
         private async void btnIdentify_Click(object sender, RoutedEventArgs e)
@@ -239,15 +242,13 @@ namespace WhoIsTalkingApp
             Stream str = AudioStream.AsStream();
             str.Seek(0, SeekOrigin.Begin);
 
-            Microsoft.ProjectOxford.SpeakerRecognition.Contract.Identification.Profile[] selectedProfiles = new Microsoft.ProjectOxford.SpeakerRecognition.Contract.Identification.Profile[lbProfiles.Items.Count]; ;
-
+            Profile[] selectedProfiles = new Profile[lbProfiles.Items.Count]; ;
 
             Guid[] testProfileIds = new Guid[selectedProfiles.Length];
             for (int i = 0; i < lbProfiles.Items.Count; i++)
             {
                 testProfileIds[i] = Guid.Parse((lbProfiles.Items[i] as ListBoxItem).Content.ToString());
             }
-
 
             OperationLocation processPollingLocation;
             try
@@ -257,9 +258,13 @@ namespace WhoIsTalkingApp
             catch (IdentificationException vx)
             {
                 txtInfo.Text = vx.Message;
-                CaptureMedia = null;
-                btnRecordEnroll.IsEnabled = true;
-                btnIdentify.IsEnabled = true;
+                CleanAfter();
+                return;
+            }
+            catch (Exception vx)
+            {
+                txtInfo.Text = vx.Message;
+                CleanAfter();
                 return;
             }
 
@@ -278,9 +283,7 @@ namespace WhoIsTalkingApp
                 else if (identificationResponse.Status == Status.Failed)
                 {
                     txtInfo.Text = identificationResponse.Message;
-                    CaptureMedia = null;
-                    btnRecordEnroll.IsEnabled = true;
-                    btnIdentify.IsEnabled = true;
+                    CleanAfter();
                     return;
                 }
                 numOfRetries--;
@@ -296,11 +299,15 @@ namespace WhoIsTalkingApp
             txtInfo.Text = txtInfo.Text + Environment.NewLine + identificationResponse.ProcessingResult.Confidence.ToString();
             }
 
+            CleanAfter();
+        }
+
+        void CleanAfter()
+        {
             CaptureMedia = null;
             btnRecordEnroll.IsEnabled = true;
             btnIdentify.IsEnabled = true;
         }
-
 
         private async void btnGetProfiles_Click(object sender, RoutedEventArgs e)
         {
@@ -336,7 +343,7 @@ namespace WhoIsTalkingApp
                 return;
             }
 
-            Guid _speakerId = Guid.Parse((lbProfiles.SelectedItem as ListBoxItem).Content.ToString());
+            _speakerId = Guid.Parse((lbProfiles.SelectedItem as ListBoxItem).Content.ToString());
 
             try
             {
@@ -369,7 +376,7 @@ namespace WhoIsTalkingApp
                 return;
             }
 
-            Guid _speakerId = Guid.Parse((lbProfiles.SelectedItem as ListBoxItem).Content.ToString());
+            _speakerId = Guid.Parse((lbProfiles.SelectedItem as ListBoxItem).Content.ToString());
 
             try
             {
