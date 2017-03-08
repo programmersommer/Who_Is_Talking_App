@@ -1,0 +1,51 @@
+﻿<Page
+    x:Class="WhoIsTalkingApp.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WhoIsTalkingApp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <StackPanel Margin="0,0,0,0" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+        <TextBlock TextAlignment="Center" Margin="0,5,0,0">Profiles</TextBlock>
+        <ListBox x:Name="lbProfiles" Margin="5,0,5,0"
+                 MinWidth="350"  MaxWidth="700" Height="250"></ListBox>
+
+        <TextBlock TextAlignment="Center" x:Name="txtInfo" Margin="0,5,0,0" Height="50"></TextBlock>
+
+        <Grid MinWidth="350" MaxWidth="700" HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="50"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Button Grid.Column="0" Grid.Row="0" x:Name="btnRecordEnroll" Click="btnRecordEnroll_Click"
+                    HorizontalAlignment="Center">Start record enrollment</Button>
+            
+            <Button  Grid.Column="1" Grid.Row="0" x:Name="btnGetProfiles" 
+                     HorizontalAlignment="Center" Click="btnGetProfiles_Click">Get Profiles</Button>
+
+            <Button  Grid.Column="0" Grid.Row="1" x:Name="btnIdentify" 
+                     HorizontalAlignment="Center" Click="btnIdentify_Click">Start voice identification</Button>
+
+            <Button  Grid.Column="0" Grid.Row="2" x:Name="btnResetEnroll" 
+                     HorizontalAlignment="Center" Click="btnResetEnroll_Click">Reset enrollments</Button>
+
+            <Button  Grid.Column="1" Grid.Row="2" x:Name="btnRemoveProfile" 
+                     HorizontalAlignment="Center" Click="btnRemoveProfile_Click">Remove Profile</Button>
+
+            <Button  Grid.Column="1" Grid.Row="1" x:Name="btnCreateProfile" 
+                     HorizontalAlignment="Center" Click="btnCreateProfile_Click">Create profile</Button>
+
+        </Grid>
+
+    </StackPanel>
+    
+</Page>
