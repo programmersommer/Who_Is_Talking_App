@@ -336,7 +336,7 @@ namespace WhoIsTalkingApp
 
             if (lbProfiles.SelectedIndex < 0)
             {
-                txtInfo.Text = "Get profiles";
+                txtInfo.Text = "Get profiles and select one of them";
                 return;
             }
 
@@ -369,7 +369,7 @@ namespace WhoIsTalkingApp
 
             if (lbProfiles.SelectedIndex < 0)
             {
-                txtInfo.Text = "Get profiles";
+                txtInfo.Text = "Get profiles and select one of them";
                 return;
             }
 
